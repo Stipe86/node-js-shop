@@ -8,7 +8,6 @@ const adminData = require("./admin");
 const router = express.Router();
 
 // Old route handler using static HTML file (before Pug integration). This code was used to serve `shop.html` directly from the views folder:
-
 // router.get("/", (req, res, next) => {
 //   console.log("shop.js:", adminData.products);
 //   res.sendFile(path.join(rootDir, "views", "shop.html"));
