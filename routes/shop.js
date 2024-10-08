@@ -15,7 +15,9 @@ const router = express.Router();
 
 // This setup uses Pug as the templating engine to render the `shop.pug` file. Since we set Pug as the default view engine and the `views` folder as the default location, we don’t need to specify the file extension (shop.pug) or the full path to the template (to that folder). Express will automatically look for `shop.pug` in the `views` directory and use it to generate the HTML response
 router.get("/", (req, res, next) => {
-  res.render("shop");
+  const prods = adminData.products;
+
+  res.render("shop", { products: prods, docTitle: "shop" });
 });
 
 module.exports = router;
