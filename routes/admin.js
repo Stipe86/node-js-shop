@@ -17,7 +17,10 @@ const products = [];
 
 // This setup uses Pug as the templating engine to render the `add-product.pug` file. Since we set Pug as the default view engine and the `views` folder as the default location, we don’t need to specify the file extension (add-product.pug) or the full path to the template (to that folder). Express will automatically look for `add-product.pug` in the `views` directory and use it to generate the HTML response
 router.get("/add-product", (req, res, next) => {
-  res.render("add-product");
+  res.render("add-product", {
+    pageTitle: "Add Product",
+    path: "/admin/add-product",
+  });
 });
 
 // /admin/add-product => POST
