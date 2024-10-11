@@ -14,7 +14,17 @@ const router = express.Router();
 
 router.get("/", (req, res, next) => {
   const prods = adminData.products;
-  res.render("shop", { products: prods, hasProducts: prods.length > 0 });
+  res.render("shop", {
+    products: prods,
+    hasProducts: prods.length > 0,
+    pageTitle: "Shop",
+    productCSS: true,
+    activeShop: true,
+
+    // Use 'layout: false' to prevent this specific view from using the default layout.
+    // This is useful when you want a standalone view without any layout wrapping it.
+    // layout: false
+  });
 });
 
 module.exports = router;
