@@ -16,7 +16,12 @@ const products = [];
 
 // This setup uses EJS as the templating engine to render the `add-product.ejs` file. Since we set EJS as the default view engine and the `views` folder as the default location, we don’t need to specify the file extension (add-product.ejs) or the full path to the template (to that folder). Express will automatically look for `add-product.ejs` in the `views` directory and use it to generate the HTML response
 router.get("/add-product", (req, res, next) => {
-  res.render("add-product", { pageTitle: "Add Product" });
+  res.render("add-product", {
+    pageTitle: "Add Product",
+    // addProductActive: true,
+    // shopActive: false,
+    path: "/admin/add-product",
+  });
 });
 
 // /admin/add-product => POST

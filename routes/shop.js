@@ -13,11 +13,17 @@ const router = express.Router();
 //   res.sendFile(path.join(rootDir, "views", "shop.html"));
 // });
 
-// This setup uses EJS as the templating engine to render the `shop.ejs` file. Since we set Pug as the default view engine and the `views` folder as the default location, we don’t need to specify the file extension (shop.ejs) or the full path to the template (to that folder). Express will automatically look for `shop.ejs` in the `views` directory and use it to generate the HTML response
+// This setup uses EJS as the templating engine to render the `shop.ejs` file. Since we set EJS as the default view engine and the `views` folder as the default location, we don’t need to specify the file extension (shop.ejs) or the full path to the template (to that folder). Express will automatically look for `shop.ejs` in the `views` directory and use it to generate the HTML response
 router.get("/", (req, res, next) => {
   console.log("shop.js:", adminData.products);
   const prods = adminData.products;
-  res.render("shop", { pageTitle: "Shop", products: prods });
+  res.render("shop", {
+    pageTitle: "Shop",
+    products: prods,
+    // shopActive: true,
+    // addProductActive: false,
+    path: "/",
+  });
 });
 
 module.exports = router;

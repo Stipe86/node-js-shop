@@ -32,7 +32,7 @@ app.use(shopRoutes);
 
 // This setup uses EJS as the templating engine to render the `404.ejs` file. Since we set EJS as the default view engine and the `views` folder as the default location, we don’t need to specify the file extension (404.ejs) or the full path to the template (to that folder). Express will automatically look for `404.ejs` in the `views` directory and use it to generate the HTML response
 app.use((req, res, next) => {
-  res.status(404).render("404", { pageTitle: "Page Not Found" });
+  res.status(404).render("404", { pageTitle: "Page Not Found", path: "" });
 });
 
 app.listen(3000);
