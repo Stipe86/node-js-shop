@@ -7,7 +7,7 @@ const rootDir = require("../util/path.js");
 // Define the path to the 'products.json' file where we'll store the products
 const filePath = path.join(rootDir, "data", "products.json");
 
-const Product = class {
+module.exports = class Product {
   constructor(t) {
     this.title = t;
   }
@@ -24,12 +24,18 @@ const Product = class {
         // Start with an empty array of products
         products = [];
       } else {
-        // No error, successfully read the file
-        // Parse the file contents into a JavaScript array
-        products = JSON.parse(fileContent);
+        try {
+          // Try to parse the file content into a JavaScript array, but if it's invalid, catch the error
+          products = JSON.parse(fileContent);
+        } catch (parseError) {
+          console.log(
+            "Error parsing JSON data. Starting with an empty products array.",
+            parseError
+          );
+        }
       }
 
-      // Add the new product to the array
+      // Add the new product, (the current product instance (this)) to the array
       products.push(this);
 
       // Write the updated array back to the file
@@ -43,18 +49,22 @@ const Product = class {
   }
 
   // Static method to fetch all products
-  static fetchAll() {
+  static fetchAll(cb) {
     // Read the 'products.json' file
     fs.readFile(filePath, (err, fileContent) => {
-      // If there's an error (e.g., file doesn't exist), return an empty array
+      // If there's an error (e.g., file doesn't exist), return an empty array via callback
       if (err) {
-        return [];
+        cb([]);
       } else {
-        // Otherwise parse the JSON content into an array and return it
-        return JSON.parse(fileContent); // Return the array of products
+        // Otherwise try to parse the file content into a JavaScript array and return it, but if it's invalid, catch the error
+        try {
+          cb(JSON.parse(fileContent)); // Return the array of products via callback
+        } catch (parseError) {
+          // If parsing fails, return an empty array
+          console.log("Error parsing JSON", parseError);
+          cb([]);
+        }
       }
     });
   }
 };
-
-module.exports = Product;

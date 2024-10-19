@@ -13,11 +13,23 @@ exports.postAddProduct = (req, res, next) => {
   res.redirect("/");
 };
 
+// exports.getProducts = (req, res, next) => {
+//   const prods = Product.fetchAll();
+//   res.render("shop", {
+//     products: prods,
+//     pageTitle: "Shop",
+//     path: "/",
+//   });
+// };
+
 exports.getProducts = (req, res, next) => {
-  const prods = Product.fetchAll();
-  res.render("shop", {
-    products: prods,
-    pageTitle: "Shop",
-    path: "/",
+  // Passing the anonimous callback function with an argument 'prods' as an argument to fetchAll,
+  //and expecting, when it is done its execution, to get the products returned in the 'prods'
+  Product.fetchAll((prods) => {
+    res.render("shop", {
+      products: prods, // products will now come from the file
+      pageTitle: "Shop",
+      path: "/",
+    });
   });
 };
