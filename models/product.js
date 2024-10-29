@@ -45,6 +45,8 @@ module.exports = class Product {
 
   // Save method to add a new product to the 'products.json' file
   save() {
+    // Generate a random ID for the product
+    this.id = Math.random().toString();
     // Call the helper function to get the current products
     getProductsFromFile((products) => {
       // Add the new product, (the current product instance (this)) to the array
@@ -60,5 +62,25 @@ module.exports = class Product {
   // Static method to fetch all products from the file
   static fetchAll(cb) {
     getProductsFromFile(cb);
+  }
+
+  // Explanation of the first attempt failure:
+  // This code tries to return `product` directly from within the `getProductsFromFile` callback.
+  // However, due to the asynchronous nature of `fs.readFile` (used within `getProductsFromFile`),
+  // `findById` cannot return the product immediately.
+  // Instead, it would end up returning `undefined` because the callback completes after `findById` has already returned.
+
+  // static findById(id) {
+  //   getProductsFromFile((products) => {
+  //     const product = products.find((p) => p.id === id);
+  //     return product;
+  //   });
+  // }
+
+  static findById(id, cb) {
+    getProductsFromFile((products) => {
+      const product = products.find((p) => p.id === id);
+      cb(product);
+    });
   }
 };

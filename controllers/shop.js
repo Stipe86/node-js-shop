@@ -19,6 +19,32 @@ exports.getProducts = (req, res, next) => {
   });
 };
 
+// Explanation of the first attempt failure:
+// 1. `req.param.productId` is incorrect; the correct syntax is `req.params.productId` to access route parameters.
+// 2. Calling `Product.findById(productId)` without a callback ignores that it operates asynchronously.
+//    This causes `product` to be `undefined` when passed to `res.render` because `findById` hasn't finished executing.
+
+// exports.getProduct = (req, res, next) => {
+//   const productId = req.param.productId;
+//   const product = Product.findById(productId);
+//   res.render("shop/product-detail", {
+//     product: product,
+//     pageTitle: product.title,
+//     path: "/products",
+//   });
+// };
+
+exports.getProduct = (req, res, next) => {
+  const productId = req.params.productId;
+  Product.findById(productId, (product) => {
+    res.render("shop/product-detail", {
+      product: product,
+      pageTitle: product.title,
+      path: "/products",
+    });
+  });
+};
+
 exports.getCart = (req, res, next) => {
   res.render("shop/cart", {
     pageTitle: "Your Cart",
