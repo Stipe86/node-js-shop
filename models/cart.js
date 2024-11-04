@@ -25,15 +25,27 @@ module.exports = class Cart {
       );
       const existingProduct = cart.products[existingProductIndex];
 
+      let newProduct;
+
       if (existingProduct) {
-        existingProduct.quantity += 1;
+        newProduct = { ...existingProduct };
+        newProduct.quantity += 1;
+        cart.products = [...cart.products];
+        cart.products[existingProductIndex] = newProduct;
       } else {
-        cart.products.push({
-          id: prodId,
-          price: prodPrice,
-          quantity: 1,
-        });
+        newProduct = { id: prodId, price: prodPrice, quantity: 1 };
+        cart.products = [...cart.products, newProduct];
       }
+
+      // if (existingProduct) {
+      //   existingProduct.quantity += 1;
+      // } else {
+      //   cart.products.push({
+      //     id: prodId,
+      //     price: prodPrice,
+      //     quantity: 1,
+      //   });
+      // }
 
       cart.totalPrice += prodPrice;
 
