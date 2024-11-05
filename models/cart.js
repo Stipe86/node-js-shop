@@ -23,20 +23,39 @@ module.exports = class Cart {
     );
     const existingProduct = cart.products[existingProductIndex];
 
-    let newProduct;
-    let temporaryCart = { ...cart };
+    let newProduct = existingProduct
+      ? {
+          ...existingProduct,
+          quantity: existingProduct.quantity + 1,
+        }
+      : { id: prodId, price: prodPrice, quantity: 1 };
 
-    if (existingProduct) {
-      newProduct = { ...existingProduct };
-      temporaryCart.products[existingProductIndex].quantity += 1;
-    } else {
-      newProduct = { id: prodId, price: prodPrice, quantity: 1 };
-      temporaryCart.products = [...cart.products, newProduct];
-    }
+    let updatedCartProducts = existingProduct
+      ? [
+          ...cart.products.slice(0, existingProductIndex),
+          newProduct,
+          ...cart.products.slice(existingProductIndex + 1),
+        ]
+      : [...cart.products, newProduct];
 
-    cart = { ...temporaryCart };
+    cart.products = updatedCartProducts;
 
     cart.totalPrice += prodPrice;
+
+    // let newProduct;
+    // let temporaryCart = { ...cart };
+
+    // if (existingProduct) {
+    //   newProduct = { ...existingProduct };
+    //   temporaryCart.products[existingProductIndex].quantity += 1;
+    // } else {
+    //   newProduct = { id: prodId, price: prodPrice, quantity: 1 };
+    //   temporaryCart.products = [...cart.products, newProduct];
+    // }
+
+    // cart = { ...temporaryCart };
+
+    // cart.totalPrice += prodPrice;
 
     try {
       await fs.writeFile(filePath, JSON.stringify(cart));
