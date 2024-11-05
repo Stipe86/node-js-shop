@@ -7,8 +7,7 @@ const rootDir = require("../util/path.js");
 const filePath = path.join(rootDir, "data", "cart.json");
 
 module.exports = class Cart {
-  static addToCart(prodId, price) {
-    const prodPrice = parseFloat(price);
+  static addToCart(prodId, prodPrice) {
     fs.readFile(filePath, (err, fileContent) => {
       let cart = { products: [], totalPrice: 0 };
 
@@ -37,17 +36,7 @@ module.exports = class Cart {
         cart.products = [...cart.products, newProduct];
       }
 
-      // if (existingProduct) {
-      //   existingProduct.quantity += 1;
-      // } else {
-      //   cart.products.push({
-      //     id: prodId,
-      //     price: prodPrice,
-      //     quantity: 1,
-      //   });
-      // }
-
-      cart.totalPrice += prodPrice;
+      cart.totalPrice += +prodPrice;
 
       fs.writeFile(filePath, JSON.stringify(cart), (err) => {
         console.log("Error writing to cart.json:", err);

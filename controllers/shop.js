@@ -56,12 +56,14 @@ exports.getCart = (req, res, next) => {
 
 exports.postCart = (req, res, next) => {
   const productId = req.body.productId;
-  const productPrice = req.body.productPrice;
+  // const productPrice = req.body.productPrice;
 
-  console.log("Product id: ", productId);
-  console.log("Product price: ", productPrice);
+  // console.log("Product id: ", productId);
+  // console.log("Product price: ", productPrice);
 
-  Cart.addToCart(productId, productPrice);
+  Product.findById(productId, (product) => {
+    Cart.addToCart(productId, product.price);
+  });
 
   res.redirect("/cart");
 };
