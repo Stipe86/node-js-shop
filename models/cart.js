@@ -42,59 +42,10 @@ module.exports = class Cart {
 
     cart.totalPrice += prodPrice;
 
-    // let newProduct;
-    // let temporaryCart = { ...cart };
-
-    // if (existingProduct) {
-    //   newProduct = { ...existingProduct };
-    //   temporaryCart.products[existingProductIndex].quantity += 1;
-    // } else {
-    //   newProduct = { id: prodId, price: prodPrice, quantity: 1 };
-    //   temporaryCart.products = [...cart.products, newProduct];
-    // }
-
-    // cart = { ...temporaryCart };
-
-    // cart.totalPrice += prodPrice;
-
     try {
       await fs.writeFile(filePath, JSON.stringify(cart));
     } catch (err) {
       console.log("Error writing to cart.json:", err);
     }
-
-    // fs.readFile(filePath, (err, fileContent) => {
-
-    // let cart = { products: [], totalPrice: 0 };
-
-    //   if (!err) {
-    //     try {
-    //       cart = JSON.parse(fileContent);
-    //     } catch (parseError) {
-    //       console.log("Error parsing cart.json:", parseError);
-    //     }
-    //   }
-
-    //   const existingProductIndex = cart.products.findIndex(
-    //     (p) => p.id === prodId
-    //   );
-    //   const existingProduct = cart.products[existingProductIndex];
-
-    //   if (existingProduct) {
-    //     existingProduct.quantity += 1;
-    //   } else {
-    //     cart.products.push({
-    //       id: prodId,
-    //       price: prodPrice,
-    //       quantity: 1,
-    //     });
-    //   }
-
-    //   cart.totalPrice += prodPrice;
-
-    //   fs.writeFile(filePath, JSON.stringify(cart), (err) => {
-    //     console.log("Error writing to cart.json:", err);
-    //   });
-    // });
   }
 };
