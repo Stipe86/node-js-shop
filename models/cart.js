@@ -23,15 +23,18 @@ module.exports = class Cart {
     );
     const existingProduct = cart.products[existingProductIndex];
 
+    let newProduct;
+    let temporaryCart = { ...cart };
+
     if (existingProduct) {
-      existingProduct.quantity += 1;
+      newProduct = { ...existingProduct };
+      temporaryCart.products[existingProductIndex].quantity += 1;
     } else {
-      cart.products.push({
-        id: prodId,
-        price: prodPrice,
-        quantity: 1,
-      });
+      newProduct = { id: prodId, price: prodPrice, quantity: 1 };
+      temporaryCart.products = [...cart.products, newProduct];
     }
+
+    cart = { ...temporaryCart };
 
     cart.totalPrice += prodPrice;
 
