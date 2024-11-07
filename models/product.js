@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 const rootDir = require("../util/path.js");
+const e = require("express");
 
 // Define the path to the 'products.json' file where we'll store the products
 const filePath = path.join(rootDir, "data", "products.json");
@@ -52,8 +53,43 @@ module.exports = class Product {
       // Add the new product, (the current product instance (this)) to the array
       products.push(this);
       // Write the updated array back to the file as a JSON string
-      fs.writeFile(filePath, JSON.stringify(products), (err) => {
+      fs.writeFile(filePath, JSON.stringify(products, null, 2), (err) => {
         // Log if there was an error writing to the file
+        console.log("Error writing to file", err);
+      });
+    });
+  }
+
+  static edit(id, title, imageUrl, price, description) {
+    getProductsFromFile((products) => {
+      const existingProductIndex = products.findIndex((p) => p.id === id);
+
+      if (existingProductIndex === -1) {
+        console.log(`Product with ID ${id} not found. Cannot edit.`);
+        return;
+      }
+
+      // const updatedProducts = [...products];
+
+      // const updatedProduct = products[existingProductIndex];
+
+      // updatedProduct.title = title;
+      // updatedProduct.imageUrl = imageUrl;
+      // updatedProduct.price = price;
+      // updatedProduct.description = description;
+
+      // Update the product fields directly in the products array
+      const updatedProduct = {
+        ...products[existingProductIndex],
+        title,
+        imageUrl,
+        price,
+        description,
+      };
+
+      products[existingProductIndex] = updatedProduct;
+
+      fs.writeFile(filePath, JSON.stringify(products, null, 2), (err) => {
         console.log("Error writing to file", err);
       });
     });

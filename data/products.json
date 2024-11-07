@@ -1,1 +1,30 @@
-[{"title":"Book 1","imageUrl":"https://cdn.pixabay.com/photo/2016/03/31/20/51/book-1296045_960_720.png","price":"15.5","description":" First awesome book","id":"0.024605640700924303"},{"title":"Book 2","imageUrl":"https://cdn.pixabay.com/photo/2016/03/31/20/51/book-1296045_960_720.png","price":"20","description":" Great book","id":"0.6657787476432937"},{"title":"Book 3","imageUrl":"https://cdn.pixabay.com/photo/2016/03/31/20/51/book-1296045_960_720.png","price":"14","description":" Another good book","id":"0.9549856427976429"}]
+[
+  {
+    "title": "Book 1",
+    "imageUrl": "https://cdn.pixabay.com/photo/2016/03/31/20/51/book-1296045_960_720.png",
+    "price": "15",
+    "description": " First awesome book",
+    "id": "0.024605640700924303"
+  },
+  {
+    "title": "Book 2",
+    "imageUrl": "https://cdn.pixabay.com/photo/2016/03/31/20/51/book-1296045_960_720.png",
+    "price": "20",
+    "description": " Great book",
+    "id": "0.6657787476432937"
+  },
+  {
+    "title": "Book 3",
+    "imageUrl": "https://cdn.pixabay.com/photo/2016/03/31/20/51/book-1296045_960_720.png",
+    "price": "10",
+    "description": " Another good book",
+    "id": "0.9549856427976429"
+  },
+  {
+    "title": "Book 4",
+    "imageUrl": "https://cdn.pixabay.com/photo/2016/03/31/20/51/book-1296045_960_720.png",
+    "price": "5",
+    "description": "True story",
+    "id": "0.1012851396884995"
+  }
+]
