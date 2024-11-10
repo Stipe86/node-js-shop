@@ -37,7 +37,8 @@ const getProductsFromFile = (cb) => {
 };
 
 module.exports = class Product {
-  constructor(title, imageUrl, price, description) {
+  constructor(id, title, imageUrl, price, description) {
+    this.id = id;
     this.title = title;
     this.imageUrl = imageUrl;
     this.price = price;
@@ -46,17 +47,35 @@ module.exports = class Product {
 
   // Save method to add a new product to the 'products.json' file
   save() {
-    // Generate a random ID for the product
-    this.id = Math.random().toString();
     // Call the helper function to get the current products
     getProductsFromFile((products) => {
-      // Add the new product, (the current product instance (this)) to the array
-      products.push(this);
-      // Write the updated array back to the file as a JSON string
-      fs.writeFile(filePath, JSON.stringify(products, null, 2), (err) => {
-        // Log if there was an error writing to the file
-        console.log("Error writing to file", err);
-      });
+      if (this.id) {
+        const existingProductIndex = products.findIndex(
+          (p) => p.id === this.id
+        );
+        const updatedProducts = [...products];
+        updatedProducts[existingProductIndex] = this;
+
+        // Write the updated array back to the file as a JSON string
+        fs.writeFile(
+          filePath,
+          JSON.stringify(updatedProducts, null, 2),
+          (err) => {
+            // Log if there was an error writing to the file
+            console.log("Error writing to file", err);
+          }
+        );
+      } else {
+        // Generate a random ID for the product
+        this.id = Math.random().toString();
+        // Add the new product, (the current product instance (this)) to the array
+        products.push(this);
+        // Write the updated array back to the file as a JSON string
+        fs.writeFile(filePath, JSON.stringify(products, null, 2), (err) => {
+          // Log if there was an error writing to the file
+          console.log("Error writing to file", err);
+        });
+      }
     });
   }
 
