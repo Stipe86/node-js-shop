@@ -19,13 +19,14 @@ exports.postAddProduct = (req, res, next) => {
 };
 
 exports.getEditProduct = (req, res, next) => {
+  const editMode = req.query.edit === "true";
   const productId = req.params.productId;
   Product.findById(productId, (product) => {
     res.render("admin/add-edit-product", {
       product: product,
       pageTitle: product.title,
       path: "/admin/edit-product",
-      editing: true,
+      editing: editMode,
     });
   });
 };
