@@ -88,16 +88,6 @@ module.exports = class Product {
         return;
       }
 
-      // const updatedProducts = [...products];
-
-      // const updatedProduct = products[existingProductIndex];
-
-      // updatedProduct.title = title;
-      // updatedProduct.imageUrl = imageUrl;
-      // updatedProduct.price = price;
-      // updatedProduct.description = description;
-
-      // Update the product fields directly in the products array
       const updatedProduct = {
         ...products[existingProductIndex],
         title,
@@ -119,18 +109,6 @@ module.exports = class Product {
     getProductsFromFile(cb);
   }
 
-  // Explanation of the first attempt failure:
-  // This code tries to return `product` directly from within the `getProductsFromFile` callback.
-  // However, due to the asynchronous nature of `fs.readFile` (used within `getProductsFromFile`),
-  // `findById` cannot return the product immediately.
-  // Instead, it would end up returning `undefined` because the callback completes after `findById` has already returned.
-
-  // static findById(id) {
-  //   getProductsFromFile((products) => {
-  //     const product = products.find((p) => p.id === id);
-  //     return product;
-  //   });
-  // }
 
   static findById(id, cb) {
     getProductsFromFile((products) => {
