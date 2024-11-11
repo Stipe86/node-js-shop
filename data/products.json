@@ -33,12 +33,5 @@
     "price": "5",
     "description": "Not a true story",
     "id": "0.4992470940159621"
-  },
-  {
-    "id": "0.901338404224137",
-    "title": "Book 6",
-    "imageUrl": "https://cdn.pixabay.com/photo/2016/03/31/20/51/book-1296045_960_720.png",
-    "price": "1",
-    "description": "Really bad book"
   }
 ]

@@ -104,11 +104,28 @@ module.exports = class Product {
     });
   }
 
+  static deleteProduct(id) {
+    getProductsFromFile((products) => {
+      const updatedProducts = products.filter((p) => p.id !== id);
+
+      fs.writeFile(
+        filePath,
+        JSON.stringify(updatedProducts, null, 2),
+        (err) => {
+          if (!err) {
+            console.log(`Product with ID ${id} deleted successfully.`);
+          } else {
+            console.error("Failed to delete product:", err);
+          }
+        }
+      );
+    });
+  }
+
   // Static method to fetch all products from the file
   static fetchAll(cb) {
     getProductsFromFile(cb);
   }
-
 
   static findById(id, cb) {
     getProductsFromFile((products) => {
