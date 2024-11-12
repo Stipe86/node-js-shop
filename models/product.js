@@ -2,6 +2,8 @@ const fs = require("fs");
 
 const path = require("path");
 
+const Cart = require("./cart");
+
 const rootDir = require("../util/path.js");
 const e = require("express");
 
@@ -113,6 +115,7 @@ module.exports = class Product {
         JSON.stringify(updatedProducts, null, 2),
         (err) => {
           if (!err) {
+            Cart.deleteProductFromCart(id);
             console.log(`Product with ID ${id} deleted successfully.`);
           } else {
             console.error("Failed to delete product:", err);

@@ -32,7 +32,7 @@ module.exports = class Cart {
         cart.products = [...cart.products];
         cart.products[existingProductIndex] = newProduct;
       } else {
-        newProduct = { id: prodId, price: prodPrice, quantity: 1 };
+        newProduct = { id: prodId, price: +prodPrice, quantity: 1 };
         cart.products = [...cart.products, newProduct];
       }
 
@@ -40,6 +40,39 @@ module.exports = class Cart {
 
       fs.writeFile(filePath, JSON.stringify(cart), (err) => {
         console.log("Error writing to cart.json:", err);
+      });
+    });
+  }
+
+  static deleteProductFromCart(id) {
+    fs.readFile(filePath, (err, fileContent) => {
+      let cart = { products: [], totalPrice: 0 };
+
+      if (!err) {
+        try {
+          cart = JSON.parse(fileContent);
+        } catch (parseError) {
+          console.log("Error parsing cart.json:", parseError);
+          return; // Stop further execution if parsing fails
+        }
+      }
+
+      const productToBeDeleted = cart.products.find((p) => p.id === id);
+
+      if (!productToBeDeleted) {
+        return; // Product not found in the cart, nothing to delete
+      }
+      // Adjust the total price
+      cart.totalPrice -= productToBeDeleted.price * productToBeDeleted.quantity;
+      // Update the products array by removing the product
+      cart.products = cart.products.filter((p) => p.id !== id);
+
+      fs.writeFile(filePath, JSON.stringify(cart), (err) => {
+        if (err) {
+          console.log("Error writing to cart.json:", err);
+        } else {
+          console.log(`Product with ID ${id} deleted from cart.`);
+        }
       });
     });
   }
