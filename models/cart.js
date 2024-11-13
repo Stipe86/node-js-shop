@@ -123,4 +123,23 @@ module.exports = class Cart {
       });
     });
   }
+
+  static fetchCartFromFile(cb) {
+    fs.readFile(filePath, (err, fileContent) => {
+      if (err) {
+        console.log("Error reading cart.json:", err);
+        return cb({ products: [], totalPrice: 0 });
+      }
+
+      let cart;
+      try {
+        cart = JSON.parse(fileContent);
+      } catch (parseError) {
+        console.log("Error parsing cart.json:", parseError);
+        cart = { products: [], totalPrice: 0 };
+      }
+
+      cb(cart);
+    });
+  }
 };

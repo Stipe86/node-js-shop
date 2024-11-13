@@ -5,7 +5,35 @@
 
      <main>
 
-      <h1>This is a Cart page</h1>
+      <% if (products.length > 0) { %>
+
+        <ul>
+          <% products.forEach(p => { %>
+
+            <!-- <li><%= p.productData.title %> (Quantity: <%= p.productData.quantity %>) (Total: <%= p.total %>)</li> -->
+
+            <li>
+              <p><%= p.productData.title %> (<%= p.quantity %>)</p>
+              <form action="/delete-from-cart" method="POST">
+              <button type="submit" class="btn">Delete</button>
+              <input type="hidden" name="productId" value="<%= p.productData.id %>" />
+            </form>
+          </li>
+
+
+            <% }); %>
+        </ul>
+
+
+
+        <% } else { %>
+
+          <h1>No Products in Cart!</h1>
+
+          <% } %>
+
+          <p>Total price: <%= total %></p>
+
 
     </main>
 
