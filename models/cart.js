@@ -76,4 +76,51 @@ module.exports = class Cart {
       });
     });
   }
+
+  static updateCartAfterEditing(id, newPrice) {
+    fs.readFile(filePath, (err, fileContent) => {
+      let cart = { products: [], totalPrice: 0 };
+
+      if (!err) {
+        try {
+          cart = JSON.parse(fileContent);
+        } catch (parseError) {
+          console.log("Error parsing cart.json:", parseError);
+          return;
+        }
+      }
+
+      const updatedCart = { ...cart };
+
+      const updatedProductIndex = updatedCart.products.findIndex(
+        (p) => p.id === id
+      );
+      const updatedProduct = updatedCart.products.find((p) => p.id === id);
+
+      if (!updatedProduct) {
+        return; // Product not found in the cart, nothing to update
+      }
+
+      const oldPrice = +updatedProduct.price;
+
+      updatedProduct.price = +newPrice;
+
+      // Update the total price based on the price difference
+      const priceDifference = newPrice - oldPrice;
+      updatedCart.totalPrice += priceDifference * updatedProduct.quantity;
+      // updatedCart.totalPrice += updatedProduct.price * updatedProduct.quantity;
+
+      updatedCart.products[updatedProductIndex] = updatedProduct;
+
+      fs.writeFile(filePath, JSON.stringify(updatedCart), (err) => {
+        if (err) {
+          console.log("Error updating cart:", err);
+        } else {
+          console.log(
+            `Product with ID: ${id} is updated in the cart replacing the old price: ${oldPrice} with the new one: ${newPrice}.`
+          );
+        }
+      });
+    });
+  }
 };

@@ -56,8 +56,14 @@ module.exports = class Product {
           (p) => p.id === this.id
         );
         const updatedProducts = [...products];
+
+        const oldPrice = updatedProducts[existingProductIndex].price;
+        const newPrice = this.price;
         updatedProducts[existingProductIndex] = this;
 
+        if (oldPrice !== newPrice) {
+          Cart.updateCartAfterEditing(this.id, this.price);
+        }
         // Write the updated array back to the file as a JSON string
         fs.writeFile(
           filePath,
