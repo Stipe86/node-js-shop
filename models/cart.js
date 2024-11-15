@@ -53,18 +53,18 @@ module.exports = class Cart {
           cart = JSON.parse(fileContent);
         } catch (parseError) {
           console.log("Error parsing cart.json:", parseError);
-          return; // Stop further execution if parsing fails
+          return;
         }
       }
 
       const productToBeDeleted = cart.products.find((p) => p.id === id);
 
       if (!productToBeDeleted) {
-        return; // Product not found in the cart, nothing to delete
+        return;
       }
-      // Adjust the total price
+      
       cart.totalPrice -= productToBeDeleted.price * productToBeDeleted.quantity;
-      // Update the products array by removing the product
+
       cart.products = cart.products.filter((p) => p.id !== id);
 
       fs.writeFile(filePath, JSON.stringify(cart), (err) => {
@@ -98,17 +98,16 @@ module.exports = class Cart {
       const updatedProduct = updatedCart.products.find((p) => p.id === id);
 
       if (!updatedProduct) {
-        return; // Product not found in the cart, nothing to update
+        return; 
       }
 
       const oldPrice = +updatedProduct.price;
 
       updatedProduct.price = +newPrice;
 
-      // Update the total price based on the price difference
       const priceDifference = newPrice - oldPrice;
       updatedCart.totalPrice += priceDifference * updatedProduct.quantity;
-      // updatedCart.totalPrice += updatedProduct.price * updatedProduct.quantity;
+
 
       updatedCart.products[updatedProductIndex] = updatedProduct;
 
