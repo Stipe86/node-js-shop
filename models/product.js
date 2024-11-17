@@ -131,6 +131,7 @@ module.exports = class Product {
     });
   }
 
+  // Static method to fetch all products from the file
   static fetchAll(cb) {
     getProductsFromFile(cb);
   }
