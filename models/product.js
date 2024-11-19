@@ -1,5 +1,7 @@
 const fs = require("fs");
 
+const db = require("../util/database.js");
+
 const path = require("path");
 
 const Cart = require("./cart");
@@ -47,45 +49,52 @@ module.exports = class Product {
     this.description = description;
   }
 
-  // Save method to add a new product to the 'products.json' file
   save() {
-    // Call the helper function to get the current products
-    getProductsFromFile((products) => {
-      if (this.id) {
-        const existingProductIndex = products.findIndex(
-          (p) => p.id === this.id
-        );
-        const updatedProducts = [...products];
-
-        const oldPrice = updatedProducts[existingProductIndex].price;
-        const newPrice = this.price;
-        updatedProducts[existingProductIndex] = this;
-
-        if (oldPrice !== newPrice) {
-          Cart.updateCartAfterEditing(this.id, this.price);
-        }
-        // Write the updated array back to the file as a JSON string
-        fs.writeFile(
-          filePath,
-          JSON.stringify(updatedProducts, null, 2),
-          (err) => {
-            // Log if there was an error writing to the file
-            console.log("Error writing to file", err);
-          }
-        );
-      } else {
-        // Generate a random ID for the product
-        this.id = Math.random().toString();
-        // Add the new product, (the current product instance (this)) to the array
-        products.push(this);
-        // Write the updated array back to the file as a JSON string
-        fs.writeFile(filePath, JSON.stringify(products, null, 2), (err) => {
-          // Log if there was an error writing to the file
-          console.log("Error writing to file", err);
-        });
-      }
-    });
+    return db.execute(
+      "INSERT INTO products (title, imageUrl, price, description) VALUES (?,?,?,?)",
+      [this.title, this.imageUrl, this.price, this.description]
+    );
   }
+
+  // // Save method to add a new product to the 'products.json' file
+  // save() {
+  //   // Call the helper function to get the current products
+  //   getProductsFromFile((products) => {
+  //     if (this.id) {
+  //       const existingProductIndex = products.findIndex(
+  //         (p) => p.id === this.id
+  //       );
+  //       const updatedProducts = [...products];
+
+  //       const oldPrice = updatedProducts[existingProductIndex].price;
+  //       const newPrice = this.price;
+  //       updatedProducts[existingProductIndex] = this;
+
+  //       if (oldPrice !== newPrice) {
+  //         Cart.updateCartAfterEditing(this.id, this.price);
+  //       }
+  //       // Write the updated array back to the file as a JSON string
+  //       fs.writeFile(
+  //         filePath,
+  //         JSON.stringify(updatedProducts, null, 2),
+  //         (err) => {
+  //           // Log if there was an error writing to the file
+  //           console.log("Error writing to file", err);
+  //         }
+  //       );
+  //     } else {
+  //       // Generate a random ID for the product
+  //       this.id = Math.random().toString();
+  //       // Add the new product, (the current product instance (this)) to the array
+  //       products.push(this);
+  //       // Write the updated array back to the file as a JSON string
+  //       fs.writeFile(filePath, JSON.stringify(products, null, 2), (err) => {
+  //         // Log if there was an error writing to the file
+  //         console.log("Error writing to file", err);
+  //       });
+  //     }
+  //   });
+  // }
 
   static edit(id, title, imageUrl, price, description) {
     getProductsFromFile((products) => {
@@ -132,14 +141,22 @@ module.exports = class Product {
   }
 
   // Static method to fetch all products from the file
-  static fetchAll(cb) {
-    getProductsFromFile(cb);
+  // static fetchAll(cb) {
+  //   getProductsFromFile(cb);
+  // }
+
+  static fetchAll() {
+    return db.execute("SELECT * FROM products");
   }
 
-  static findById(id, cb) {
-    getProductsFromFile((products) => {
-      const product = products.find((p) => p.id === id);
-      cb(product);
-    });
+  // static findById(id, cb) {
+  //   getProductsFromFile((products) => {
+  //     const product = products.find((p) => p.id === id);
+  //     cb(product);
+  //   });
+  // }
+
+  static findById(id) {
+    return db.execute("SELECT * FROM products WHERE products.id = ?", [id]);
   }
 };
