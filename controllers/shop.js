@@ -10,13 +10,17 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll((prods) => {
-    res.render("shop/product-list", {
-      products: prods,
-      pageTitle: "All Products",
-      path: "/products",
+  Product.findAll()
+    .then((prods) => {
+      res.render("shop/product-list", {
+        products: prods,
+        pageTitle: "All Products",
+        path: "/products",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
     });
-  });
 };
 
 exports.getProduct = (req, res, next) => {
