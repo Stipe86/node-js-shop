@@ -19,6 +19,19 @@ const shopRoutes = require("./routes/shop");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
+// Middleware to fetch the dummy user from the database and attach it to req.user.
+// Adds a new property (req.user) to the req object to make the user available in all routes.
+// Ensures the property name (req.user) does not override existing properties like req.body.
+// By doing this, we avoid repetitive database queries in every route handler.
+app.use((req, res, next) => {
+  User.findByPk(1)
+    .then((user) => {
+      req.user = user;
+      next();
+    })
+    .catch((err) => console.log(err));
+});
+
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 
@@ -28,9 +41,29 @@ Product.belongsTo(User, { constrains: true, onDelete: "CASCADE" });
 User.hasMany(Product);
 
 sequelize
-  .sync({ force: true })
+  // .sync({ force: true })
+  .sync()
   .then((result) => {
+    return User.findByPk(1);
     // console.log(result);
+  })
+  .then((user) => {
+    if (!user) {
+      return User.create({ name: "Steve", email: "steve@something.com" });
+    }
+    // return Promise.resolve(user);
+    // Using Promise.resolve(user) here explicitly ensures a consistent return type
+    // (a Promise) across both branches of this if-else statement.
+    // However, in this specific case, returning just `user` directly is safe because:
+    // - Sequelize's User.create() already returns a Promise.
+    // - User.findByPk() also returns a Promise resolving to a Sequelize user object.
+    // Therefore, `return user;` can be used instead, as both branches are guaranteed
+    // to return the same type (a Sequelize user object).
+    // Uncomment the `return Promise.resolve(user);` line if you want to be explicit
+    return Promise.resolve(user);
+  })
+  .then((user) => {
+    console.log(user);
     app.listen(3000);
   })
   .catch((err) => {
