@@ -62,32 +62,21 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  Cart.fetchCartFromFile((cart) => {
-    Product.fetchAll((products) => {
-      const cartProducts = [];
-
-      for (product of products) {
-        const cartProductData = cart.products.find(
-          (prod) => prod.id === product.id
-        );
-
-        if (cartProductData) {
-          cartProducts.push({
-            productData: product,
-            quantity: cartProductData.quantity,
-          });
-          console.log("CartProducts: ", cartProducts);
-          console.log("CartProductData:", cartProductData);
-        }
-      }
+  req.user
+    .getCart()
+    .then((cart) => {
+      return cart.getProducts(); // another magic method added by a sequelize
+    })
+    .then((cartProducts) => {
       res.render("shop/cart", {
         pageTitle: "Your Cart",
         path: "/cart",
         products: cartProducts,
-        total: cart.totalPrice,
       });
+    })
+    .catch((err) => {
+      console.log(err);
     });
-  });
 };
 
 exports.postDeleteFromCart = (req, res, next) => {

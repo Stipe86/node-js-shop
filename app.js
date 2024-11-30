@@ -47,8 +47,8 @@ Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
 
 sequelize
-  .sync({ force: true })
-  // .sync()
+  // .sync({ force: true })
+  .sync()
   .then((result) => {
     return User.findByPk(1);
     // console.log(result);
@@ -66,10 +66,20 @@ sequelize
     // Therefore, `return user;` can be used instead, as both branches are guaranteed
     // to return the same type (a Sequelize user object).
     // Uncomment the `return Promise.resolve(user);` line if you want to be explicit
-    return Promise.resolve(user);
+    return user;
   })
+  // .then((user) => {
+  //   return user.createCart();
+  // })
   .then((user) => {
-    console.log(user);
+    return user.getCart().then((cart) => {
+      if (!cart) {
+        return user.createCart(); // Create cart only if none exists
+      }
+      return cart; // Cart already exists, return it
+    });
+  })
+  .then((cart) => {
     app.listen(3000);
   })
   .catch((err) => {
