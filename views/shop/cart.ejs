@@ -12,10 +12,10 @@
 
 
             <li>
-              <p><%= p.productData.title %>, $<%= p.productData.price %> (<%= p.quantity %>)</p>
+              <p><%= p.title %>, $<%= p.price %> (<%= p.cartItem.quantity %>)</p>
               <form action="/delete-from-cart" method="POST">
               <button type="submit" class="btn">Delete</button>
-              <input type="hidden" name="productId" value="<%= p.productData.id %>" />
+              <input type="hidden" name="productId" value="<%= p.id %>" />
             </form>
           </li>
 
@@ -30,8 +30,7 @@
           <h1>No Products in Cart!</h1>
 
           <% } %>
-
-          <p>Total price: $<%= total %></p>
+          
 
 
     </main>

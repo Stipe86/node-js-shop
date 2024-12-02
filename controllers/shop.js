@@ -23,17 +23,6 @@ exports.getProducts = (req, res, next) => {
     });
 };
 
-// exports.getProduct = (req, res, next) => {
-//   const productId = req.params.productId;
-//   Product.findById(productId, (product) => {
-//     res.render("shop/product-detail", {
-//       product: product,
-//       pageTitle: product.title,
-//       path: "/products",
-//     });
-//   });
-// };
-
 exports.getProduct = (req, res, next) => {
   const productId = req.params.productId;
 
@@ -88,12 +77,49 @@ exports.postDeleteFromCart = (req, res, next) => {
 
 exports.postCart = (req, res, next) => {
   const productId = req.body.productId;
+  let fetchedCart;
+  let newQuantity = 1;
 
-  Product.findById(productId, (product) => {
-    Cart.addToCart(productId, product.price);
-  });
+  req.user
+    .getCart() // Get the cart associated with the user
+    .then((cart) => {
+      fetchedCart = cart; // Cache the cart instance
+      return cart.getProducts({ where: { id: productId } }); // Look for the product in the cart
+    })
+    .then((products) => {
+      let product;
 
-  res.redirect("/cart");
+      if (products.length > 0) {
+        product = products[0];
+        // Since the logic in if (products.length > 0) already ensures product exists
+        //when accessing cartItem it can be written here omiting the if(product) check below
+        // newQuantity = product.cartItem.quantity + 1;
+        // return product;
+      }
+
+      // The if (product) check is a safeguard against unexpected scenarios, even if the scenario where it’s needed is rare
+      if (product) {
+        const oldQuantity = product.cartItem.quantity;
+        // newQuantity = oldQuantity++ // oldQuantity++ is a post-increment operator. It means the current value of oldQuantity is assigned to newQuantity before oldQuantity is incremented  (newQuantity = 1, oldQuantity = 2)
+        newQuantity = oldQuantity + 1; // Increment quantity
+        return product; // Return the existing product
+      }
+
+      // If product is not in the cart, fetch it from the database
+      return Product.findByPk(productId);
+    })
+    .then((product) => {
+      // Add or update the product in the cart
+      return fetchedCart.addProduct(product, {
+        through: { quantity: newQuantity },
+      });
+    })
+    .then(() => {
+      res.redirect("/cart"); // Redirect to the cart page
+    })
+    .catch((err) => {
+      console.log(err); // Log potential errors
+    });
 };
 
 exports.getOrders = (req, res, next) => {
