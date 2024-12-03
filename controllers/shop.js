@@ -57,10 +57,17 @@ exports.getCart = (req, res, next) => {
       return cart.getProducts(); // another magic method added by a sequelize
     })
     .then((cartProducts) => {
+      let total = 0;
+
+      cartProducts.forEach((p) => {
+        total += p.cartItem.quantity * p.price;
+      });
+
       res.render("shop/cart", {
         pageTitle: "Your Cart",
         path: "/cart",
         products: cartProducts,
+        total: total,
       });
     })
     .catch((err) => {
