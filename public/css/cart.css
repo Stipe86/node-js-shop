@@ -26,3 +26,25 @@ p {
   font-size: 1.2rem;
   margin-top: 2rem;
 }
+
+/* Responsive design: Adjusts layout for small screens */
+@media (max-width: 500px) {
+  .cart__item {
+    flex-direction: column; /* Stacks items vertically */
+  }
+
+  .cart__item h1 {
+    position: relative; /* Enables underline positioning */
+    margin-bottom: 0.5rem; /* Adds spacing for better readability */
+  }
+
+  .cart__item h1::after {
+    content: ""; /* Creates underline effect */
+    position: absolute;
+    bottom: -3px; /* Adjusts underline position */
+    left: 0;
+    width: 100%; /* Matches title width */
+    height: 2px; /* Thickness of the underline */
+    background-color: #00695c; /* Underline color */
+  }
+}
