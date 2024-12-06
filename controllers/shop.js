@@ -1,6 +1,6 @@
 const Product = require("../models/product.js");
-
 const Cart = require("../models/cart.js");
+const Order = require("../models/order.js");
 
 exports.getIndex = (req, res, next) => {
   res.render("shop/index", {
@@ -139,6 +139,35 @@ exports.postCart = (req, res, next) => {
     })
     .catch((err) => {
       console.log(err); // Log potential errors
+    });
+};
+
+exports.postOrder = (req, res, next) => {
+  req.user
+    .getCart()
+    .then((cart) => {
+      return cart.getProducts();
+    })
+    .then((products) => {
+      return req.user
+        .createOrder()
+        .then((order) => {
+          return order.addProducts(
+            products.map((product) => {
+              product.orderItem = { quantity: product.cartItem.quantity };
+              return product;
+            })
+          );
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    })
+    .then((result) => {
+      res.redirect("/orders");
+    })
+    .catch((err) => {
+      console.log(err);
     });
 };
 
