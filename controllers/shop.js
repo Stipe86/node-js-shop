@@ -1,6 +1,4 @@
 const Product = require("../models/product.js");
-const Cart = require("../models/cart.js");
-const Order = require("../models/order.js");
 
 exports.getIndex = (req, res, next) => {
   res.render("shop/index", {
@@ -143,39 +141,60 @@ exports.postCart = (req, res, next) => {
 };
 
 exports.postOrder = (req, res, next) => {
+  let productsToOrder; // Temporary variable to store products from the cart
+  let fetchedCart; // Variable to store the fetched cart for later clearing
+
   req.user
-    .getCart()
+    .getCart() // Step 1: Fetch the cart associated with the user
     .then((cart) => {
-      return cart.getProducts();
+      fetchedCart = cart;
+      return cart.getProducts(); // Step 2: Fetch all products from the cart
     })
     .then((products) => {
-      return req.user
-        .createOrder()
-        .then((order) => {
-          return order.addProducts(
-            products.map((product) => {
-              product.orderItem = { quantity: product.cartItem.quantity };
-              return product;
-            })
-          );
+      productsToOrder = products; // Save the products to a variable for later use
+      return req.user.createOrder(); // Step 3: Create a new order for the user
+    })
+    .then((order) => {
+      // Step 4: Add products to the created order with their quantities
+      return order.addProducts(
+        productsToOrder.map((product) => {
+          // For each product, attach a temporary 'orderItem' object containing the quantity from 'cartItem'
+          // This 'orderItem' object is used by Sequelize to populate the junction table 'orderItem'
+          product.orderItem = { quantity: product.cartItem.quantity };
+          return product; // Return the modified product object
         })
-        .catch((err) => {
-          console.log(err);
-        });
+      );
     })
     .then((result) => {
-      res.redirect("/orders");
+      return fetchedCart.setProducts(null); // Step 5: Clear the cart by dissociating all products from it
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .then((result) => {
+      res.redirect("/orders"); // Step 6: Redirect the user to the orders page
+    })
+    .catch((err) => console.log(err)); // Log any errors that occur in the process
 };
 
 exports.getOrders = (req, res, next) => {
-  res.render("shop/orders", {
-    pageTitle: "Your Orders",
-    path: "/orders",
-  });
+  // Step 1: Fetch orders for the current user
+  req.user
+    .getOrders({ include: ["products"] })
+    // The 'include' option ensures related 'products' are eagerly loaded along with the orders.
+    // This utilizes Sequelize associations to fetch both orders and their associated products
+    // in a single database query, improving efficiency and simplifying the code.
+
+    .then((orders) => {
+      // Step 2: Render the orders page
+      // Pass the fetched orders to the 'shop/orders' template for display
+      res.render("shop/orders", {
+        pageTitle: "Your Orders", // Dynamic title for the page
+        path: "/orders", // Active navigation path for highlighting
+        orders: orders, // Orders data, including associated products, to be displayed on the page
+      });
+    })
+    .catch((err) => {
+      // Log any errors encountered during the process
+      console.log(err);
+    });
 };
 
 exports.getCheckout = (req, res, next) => {
