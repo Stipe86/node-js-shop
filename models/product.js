@@ -1,3 +1,5 @@
+const getDb = require("../util/database.js").getDb;
+
 const fs = require("fs");
 
 const path = require("path");
@@ -39,52 +41,24 @@ const getProductsFromFile = (cb) => {
 };
 
 module.exports = class Product {
-  constructor(id, title, imageUrl, price, description) {
-    this.id = id;
+  constructor(title, imageUrl, price, description) {
     this.title = title;
     this.imageUrl = imageUrl;
     this.price = price;
     this.description = description;
   }
 
-  // Save method to add a new product to the 'products.json' file
   save() {
-    // Call the helper function to get the current products
-    getProductsFromFile((products) => {
-      if (this.id) {
-        const existingProductIndex = products.findIndex(
-          (p) => p.id === this.id
-        );
-        const updatedProducts = [...products];
-
-        const oldPrice = updatedProducts[existingProductIndex].price;
-        const newPrice = this.price;
-        updatedProducts[existingProductIndex] = this;
-
-        if (oldPrice !== newPrice) {
-          Cart.updateCartAfterEditing(this.id, this.price);
-        }
-        // Write the updated array back to the file as a JSON string
-        fs.writeFile(
-          filePath,
-          JSON.stringify(updatedProducts, null, 2),
-          (err) => {
-            // Log if there was an error writing to the file
-            console.log("Error writing to file", err);
-          }
-        );
-      } else {
-        // Generate a random ID for the product
-        this.id = Math.random().toString();
-        // Add the new product, (the current product instance (this)) to the array
-        products.push(this);
-        // Write the updated array back to the file as a JSON string
-        fs.writeFile(filePath, JSON.stringify(products, null, 2), (err) => {
-          // Log if there was an error writing to the file
-          console.log("Error writing to file", err);
-        });
-      }
-    });
+    const db = getDb();
+    return db
+      .collection("products")
+      .insertOne(this)
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   static edit(id, title, imageUrl, price, description) {

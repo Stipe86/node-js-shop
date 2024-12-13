@@ -4,7 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 
 const errorController = require("./controllers/error");
-const mongoConnect = require("./util/database");
+const mongoConnect = require("./util/database").mongoConnect;
 
 const app = express();
 
@@ -22,9 +22,19 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-mongoConnect((client) => {
-  console.log("MongoDB Client:", client);
+// mongoConnect((client) => {
+//   console.log("MongoDB Client:", client);
+//   app.listen(3000, () => {
+//     console.log("Server is running on http://localhost:3000");
+//   });
+// });
+
+mongoConnect(() => {
   app.listen(3000, () => {
     console.log("Server is running on http://localhost:3000");
   });
 });
+
+// mongoConnect(() => {
+//   app.listen(3000);
+// });
