@@ -1,3 +1,10 @@
+// Legacy import: Used for accessing the full MongoDB library, including ObjectId.
+// Commented out in favor of a modern, more concise approach.
+// const mongodb = require("mongodb");
+
+// Modern and recommended import: Destructuring ObjectId directly from the MongoDB module.
+// This is more concise and aligns with modern JavaScript practices.
+const { ObjectId } = require("mongodb");
 const getDb = require("../util/database.js").getDb;
 
 const fs = require("fs");
@@ -120,10 +127,47 @@ module.exports = class Product {
       });
   }
 
-  static findById(id, cb) {
-    getProductsFromFile((products) => {
-      const product = products.find((p) => p.id === id);
-      cb(product);
-    });
+  // This approach uses `mongodb.ObjectId` directly and the `.find()` method with `.next()`.
+  // It is functional but uses a deprecated ObjectId constructor and is slightly verbose.
+
+  // static findById(id) {
+  //   const db = getDb();
+  //   return db
+  //     .collection("products") //  // Why `.find()` with `.next()`? The `.find()` returns a cursor, which is usually used for iterating over multiple documents. The `.next()` retrieves the next document from the cursor (the first document, in this case).
+  //
+  //     .find({ _id: new mongodb.ObjectId(`${id}`) }) // Why template literal (`${id}`)? It ensures the `id` is treated as a string, even if a number or other type is passed accidentally. Deprecated ObjectId constructor.
+  //     .next()
+  //     .then((product) => {
+  //       console.log(product);
+  //       return product;
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }
+
+  static findById(id) {
+    const db = getDb();
+
+    // Validate ObjectId format (optional but recommended)
+    if (!ObjectId.isValid(id)) {
+      throw new Error("Invalid ObjectId format");
+    }
+
+    return (
+      db
+        .collection("products")
+        // Why `.findOne()` instead of `.find()`?
+        // - `.findOne()` is specifically for retrieving a single document and does not require `.next()`.
+        // - It's more concise and directly suited to this use case.
+        .findOne({ _id: ObjectId.createFromHexString(id) }) // Use a modern non-deprecated method
+        .then((product) => {
+          console.log(product);
+          return product;
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+    );
   }
 };
