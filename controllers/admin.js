@@ -64,12 +64,16 @@ exports.postAddProduct = (req, res, next) => {
 //   res.redirect("/admin/products");
 // };
 
-// exports.getProducts = (req, res, next) => {
-//   Product.fetchAll((prods) => {
-//     res.render("admin/products", {
-//       products: prods,
-//       pageTitle: "Admin Products",
-//       path: "/admin/products",
-//     });
-//   });
-// };
+exports.getProducts = (req, res, next) => {
+  Product.fetchAll()
+    .then((products) => {
+      res.render("admin/products", {
+        products: products,
+        pageTitle: "Admin Products",
+        path: "/admin/products",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
