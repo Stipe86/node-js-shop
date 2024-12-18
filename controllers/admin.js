@@ -46,31 +46,37 @@ exports.getEditProduct = (req, res, next) => {
 
 };
 
-// exports.postEditProduct = (req, res, next) => {
-//   const id = req.body.productId;
-//   const title = req.body.title;
-//   const imageUrl = req.body.imageUrl;
-//   const price = req.body.price;
-//   const description = req.body.description;
 
-//   console.log("Edit Request Data:", {
-//     id,
-//     title,
-//     imageUrl,
-//     price,
-//     description,
-//   });
+exports.postEditProduct = (req, res, next) => {
+  const id = req.body.productId;
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
 
-//   const updatedProduct = new Product(id, title, imageUrl, price, description);
-//   updatedProduct.save();
-//   res.redirect("/admin/products");
-// };
+  console.log("Edit Request Data:", {
+    id,
+    title,
+    imageUrl,
+    price,
+    description,
+  });
+
+  const updatedProduct = new Product( title, imageUrl, price, description, id);
+  updatedProduct.save().then(result => {
+    console.log("Updated Product!");
+    res.redirect("/admin/products");
+  }).catch(err => {
+    console.log(err);
+  });
+};
 
 // exports.postDeleteProduct = (req, res, next) => {
 //   const id = req.body.productId;
 //   Product.deleteProduct(id);
 //   res.redirect("/admin/products");
 // };
+
 
 exports.getProducts = (req, res, next) => {
   Product.fetchAll()

@@ -48,24 +48,32 @@ const getProductsFromFile = (cb) => {
 };
 
 module.exports = class Product {
-  constructor(title, imageUrl, price, description) {
+  constructor(title, imageUrl, price, description, id) {
     this.title = title;
     this.imageUrl = imageUrl;
     this.price = price;
     this.description = description;
+    this._id = id ? new ObjectId(id) : null;
   }
+
 
   save() {
     const db = getDb();
-    return db
-      .collection("products")
-      .insertOne(this)
-      .then((result) => {
-        console.log(result);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    let dbOperation;
+
+    if(this._id) {
+      // Update the product if the _id already exists
+      dbOperation = db.collection('products').updateOne({_id: this._id}, {$set: this});
+    }
+    else {
+      dbOperation = db.collection("products").insertOne(this);
+    }
+    return dbOperation.then(result => {
+      console.log(result);
+    }).catch(err => {
+      console.log(err);
+    })
+
   }
 
   static edit(id, title, imageUrl, price, description) {
