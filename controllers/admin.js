@@ -25,18 +25,26 @@ exports.postAddProduct = (req, res, next) => {
     });
 };
 
-// exports.getEditProduct = (req, res, next) => {
-//   const editMode = req.query.edit === "true";
-//   const productId = req.params.productId;
-//   Product.findById(productId, (product) => {
-//     res.render("admin/add-edit-product", {
-//       product: product,
-//       pageTitle: product.title,
-//       path: "/admin/edit-product",
-//       editing: editMode,
-//     });
-//   });
-// };
+
+exports.getEditProduct = (req, res, next) => {
+  const editMode = req.query.edit === "true";
+  const productId = req.params.productId;
+  Product.findById(productId).then((product) => {
+    if(!product) {
+      return res.redirect("/");
+    }
+
+    res.render("admin/add-edit-product", {
+      product: product,
+      pageTitle: "Edit Product",
+      path: "/admin/edit-product",
+      editing: editMode,
+    });
+  }).catch(err => {
+    console.log(err);
+  });
+
+};
 
 // exports.postEditProduct = (req, res, next) => {
 //   const id = req.body.productId;
