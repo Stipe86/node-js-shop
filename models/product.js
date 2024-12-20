@@ -102,21 +102,22 @@ module.exports = class Product {
   }
 
   static deleteProduct(id) {
-    getProductsFromFile((products) => {
-      const updatedProducts = products.filter((p) => p.id !== id);
+    const db = getDb();
 
-      fs.writeFile(
-        filePath,
-        JSON.stringify(updatedProducts, null, 2),
-        (err) => {
-          if (!err) {
-            Cart.deleteProductFromCart(id);
-            console.log(`Product with ID ${id} deleted successfully.`);
-          } else {
-            console.error("Failed to delete product:", err);
-          }
+        // Validate ObjectId format (optional but recommended)
+        if (!ObjectId.isValid(id)) {
+          throw new Error("Invalid ObjectId format");
         }
-      );
+
+    return db.collection("products").deleteOne({_id: new ObjectId(id)}).then((result) => {
+      if (result.deletedCount > 0) {
+        console.log("Product deleted successfully.");
+      } else {
+        console.log("No product found with the given ID.");
+      }
+    })
+    .catch((err) => {
+      console.log(err);
     });
   }
 

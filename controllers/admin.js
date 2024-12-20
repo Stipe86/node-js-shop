@@ -71,11 +71,15 @@ exports.postEditProduct = (req, res, next) => {
   });
 };
 
-// exports.postDeleteProduct = (req, res, next) => {
-//   const id = req.body.productId;
-//   Product.deleteProduct(id);
-//   res.redirect("/admin/products");
-// };
+
+exports.postDeleteProduct = (req, res, next) => {
+  const id = req.body.productId;
+  Product.deleteProduct(id).then(result => {
+    res.redirect("/admin/products");
+  }).catch(err => {
+    console.log(err);
+  })
+}
 
 
 exports.getProducts = (req, res, next) => {
