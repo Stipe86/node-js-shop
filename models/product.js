@@ -165,8 +165,7 @@ module.exports = class Product {
     }
 
     return (
-      db
-        .collection("products")
+      db.collection("products")
         // Why `.findOne()` instead of `.find()`?
         // - `.findOne()` is specifically for retrieving a single document and does not require `.next()`.
         // - It's more concise and directly suited to this use case.

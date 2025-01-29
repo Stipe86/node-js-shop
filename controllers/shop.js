@@ -77,11 +77,13 @@ exports.postDeleteFromCart = (req, res, next) => {
 exports.postCart = (req, res, next) => {
   const productId = req.body.productId;
 
-  Product.findById(productId, (product) => {
-    Cart.addToCart(productId, product.price);
-  });
-
-  res.redirect("/cart");
+  Product.findById(productId)
+    .then((product) => {
+      return req.user.addToCart(product);
+    })
+    .then((result) => {
+      console.log("Product added to cart: ", result);
+    });
 };
 
 exports.getOrders = (req, res, next) => {
